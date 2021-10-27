@@ -8,23 +8,34 @@ public class PhoneBookManager
 {
 	//정보저장을 위한 컬렉션 생성
 	HashSet<PhoneInfo> info;
+	/*
+	Exception in thread "main" java.lang.StackOverflowError
+	 */
+//	ObjectInputStream read = new ObjectInputStream();
+	//자동저장 상태
+	boolean autoOnOff;
 	
 	//생성자
 	public PhoneBookManager()
 	{
 		info = new HashSet<PhoneInfo>();
+		
+		//프로그램 시작 직후 전체정보를 조회하면 기존에 입력된 정보들이 출력
+//		read.readInfo();
 	}
 	
 	//멤버메소드
 	//메뉴출력
 	public void printMenu() {
 		System.out.println();
-		System.out.println("[메뉴를 선택하세요]");
-		System.out.println("1.데이터 입력");
-		System.out.println("2.데이터 검색");
-		System.out.println("3.데이터 삭제");
-		System.out.println("4.주소록 출력");
-		System.out.println("5.프로그램 종료");
+		System.out.println("===============메뉴를 선택하세요====================");
+		System.out.print("1.주소록 입력 ");
+		System.out.print("2.검색 ");
+		System.out.print("3.삭제 ");
+		System.out.print("4.출력 ");
+		System.out.print("5.저장옵션 ");
+		System.out.println("6.종료");
+		System.out.println("====================================================");
 		System.out.print("메뉴선택:");
 	}
 	//입력
@@ -134,5 +145,39 @@ public class PhoneBookManager
 		for(PhoneInfo pInfo : info) {
 			System.out.print(pInfo.toString());
 		}
+	}
+	//저장옵션 - 오토 On/Off
+	public void autoSave() {
+		Scanner scanner = new Scanner(System.in);
+		
+		System.out.println("==저장옵션선택==");
+		System.out.println("저장옵션을 선택하세요.");
+		System.out.println("1.자동저장On, 2.자동저장Off");
+		System.out.print("선택:");
+			int option = scanner.nextInt();
+			//쓰레드 객체생성
+			AutoSaverT autoT = new AutoSaverT();
+			autoT.setDaemon(true);//데몬쓰레드
+			//쓰레드 객체를 통한 쓰레드 실행
+			if(option==1) {
+				if(autoOnOff==true) {
+					System.out.println("이미 자동저장이 실행중입니다.");
+				}
+				else {
+					System.out.println("\n자동저장을 시작합니다.");
+					autoOnOff = true;
+					autoT.start();
+				}
+			}
+			else if(option==2) {
+				System.out.println("\n자동저장을 종료합니다.");
+				autoOnOff = false;
+				autoT.interrupt();
+			}
+	}
+	//저장
+	public void dataSave() {
+		ObjectOutputStream save = new ObjectOutputStream();
+		save.saveInfo();
 	}
 }
