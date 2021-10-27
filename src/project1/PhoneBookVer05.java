@@ -2,8 +2,8 @@ package project1;
 
 import java.util.Scanner;
 
-import project1.ver04.PhoneBookManager;
-import project1.ver04.PhoneInfo;
+import project1.ver05.PhoneBookManager;
+import project1.ver05.PhoneInfo;
 import project1.ver05.MenuItem;
 
 public class PhoneBookVer05

@@ -3,27 +3,21 @@ package project1;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
-import project1.ver04.PhoneBookManager;
-import project1.ver04.PhoneInfo;
-import project1.ver05.MenuItem;
-import project1.ver06.MenuSelectException;
+import project1.ver07.PhoneBookManager;
+import project1.ver07.PhoneInfo;
+import project1.ver07.MenuItem;
 
 public class PhoneBookVer07
 {
-	public static void main(String[] args) throws MenuSelectException
+	public static void main(String[] args)
 	{
+		Scanner scanner =  new Scanner(System.in);
 		PhoneBookManager pMgr = new PhoneBookManager();
-		int choice = 0;
 	
 		while(true) {
 			pMgr.printMenu();
 			
-			try {
-				choice = selectMenu();
-			}
-			catch(MenuSelectException e) {
-				System.out.println("[예외발생]"+ e.getMessage());
-			}
+			int choice = scanner.nextInt();
 			
 			switch(choice) {
 			case MenuItem.INPUT:
@@ -43,22 +37,5 @@ public class PhoneBookVer07
 				return;
 			}
 		}
-	}
-	
-	public static int selectMenu() throws MenuSelectException {
-		Scanner scanner =  new Scanner(System.in);
-		int inputNum = 0;
-		try {
-			inputNum = scanner.nextInt();
-		}
-		catch(InputMismatchException e) {
-			e.printStackTrace();
-			System.out.println("다시 입력하세요.");
-		}
-		if(inputNum<1 || inputNum>5) {
-			MenuSelectException ex = new MenuSelectException();
-			throw ex;
-		}
-		return inputNum;
 	}
 }
