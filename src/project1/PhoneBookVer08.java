@@ -3,9 +3,9 @@ package project1;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
-import project1.ver07.PhoneBookManager;
-import project1.ver07.PhoneInfo;
-import project1.ver07.MenuItem;
+import project1.ver08.PhoneBookManager;
+import project1.ver08.PhoneInfo;
+import project1.ver08.MenuItem;
 
 public class PhoneBookVer08
 {
