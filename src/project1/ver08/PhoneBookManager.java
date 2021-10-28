@@ -1,27 +1,25 @@
 package project1.ver08;
 
+import java.io.EOFException;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Scanner;
 
 public class PhoneBookManager
 {
+	PhoneBookManager pMgr;
+	
 	//정보저장을 위한 컬렉션 생성
 	HashSet<PhoneInfo> info;
-	/*
-	Exception in thread "main" java.lang.StackOverflowError
-	 */
-//	ObjectInputStream read = new ObjectInputStream();
-	//자동저장 상태
-	boolean autoOnOff;
+	//파일 저장경로
+	String directory = "src/project1/ver08/PhoneBook.obj";
+	Scanner scanner = new Scanner(System.in);
 	
 	//생성자
 	public PhoneBookManager()
 	{
 		info = new HashSet<PhoneInfo>();
-		
-		//프로그램 시작 직후 전체정보를 조회하면 기존에 입력된 정보들이 출력
-//		read.readInfo();
 	}
 	
 	//멤버메소드
@@ -40,7 +38,6 @@ public class PhoneBookManager
 	}
 	//입력
 	public void dataInput()	{
-		Scanner scanner = new Scanner(System.in);
 		String iName, iPhone, iMajor, iCompany;
 		int iGrade;
 		
@@ -100,7 +97,6 @@ public class PhoneBookManager
 	//검색
 	public void dataSearch() {
 		boolean find = false;	//검색한 정보의 유무 확인을 위한 변수
-		Scanner scanner = new Scanner(System.in);
 		System.out.println("==데이터 검색 시작==");
 		System.out.print("이름:");
 		String searchName = scanner.nextLine();
@@ -120,7 +116,6 @@ public class PhoneBookManager
 	}
 	//삭제
 	public void dataDelete() {
-		Scanner scanner = new Scanner(System.in);
 		System.out.println("==데이터 삭제 시작==");
 		System.out.print("이름:");
 		String deleteName = scanner.nextLine();
@@ -147,37 +142,78 @@ public class PhoneBookManager
 		}
 	}
 	//저장옵션 - 오토 On/Off
-	public void autoSave() {
-		Scanner scanner = new Scanner(System.in);
-		
+	public void autoSave(AutoSaverT asT) {
 		System.out.println("==저장옵션선택==");
 		System.out.println("저장옵션을 선택하세요.");
 		System.out.println("1.자동저장On, 2.자동저장Off");
 		System.out.print("선택:");
-			int option = scanner.nextInt();
-			//쓰레드 객체생성
-			AutoSaverT autoT = new AutoSaverT();
-			autoT.setDaemon(true);//데몬쓰레드
-			//쓰레드 객체를 통한 쓰레드 실행
-			if(option==1) {
-				if(autoOnOff==true) {
-					System.out.println("이미 자동저장이 실행중입니다.");
-				}
-				else {
-					System.out.println("\n자동저장을 시작합니다.");
-					autoOnOff = true;
-					autoT.start();
-				}
+		int option = scanner.nextInt();
+		//쓰레드 객체를 통한 쓰레드 실행
+		if(option==1) {
+			if(!asT.isAlive()) {	//sa.isAlive() : 쓰레드가 살아있는지 확인
+				System.out.println("\n자동저장을 시작합니다.");
+				//쓰레드 객체생성
+				asT.setDaemon(true);//데몬쓰레드
+				asT.start();
 			}
-			else if(option==2) {
+			else {
+				System.out.println("이미 자동저장이 실행중입니다.");
+			}
+		}
+		else if(option==2) {
+			if(asT.isAlive()) {
 				System.out.println("\n자동저장을 종료합니다.");
-				autoOnOff = false;
-				autoT.interrupt();
+				asT.interrupt();
 			}
+		}
+		else {
+			System.out.println("메뉴를 잘못입력하셨습니다.");
+		}
 	}
 	//저장
-	public void dataSave() {
-		ObjectOutputStream save = new ObjectOutputStream();
-		save.saveInfo();
+	public void writeInfo() {
+		try {
+			//인스턴스를 파일에 저장하기 위해 출력스트림을 생성한다. 
+			java.io.ObjectOutputStream out =
+					new java.io.ObjectOutputStream(
+							new FileOutputStream(directory)
+							);
+			//인스턴스를 생성한 후 파일에 저장한다. 
+			for(PhoneInfo pInfo : info) {
+				out.writeObject(pInfo);
+			}
+			out.close();
+			System.out.println("obj 파일로 저장되었습니다.");
+		}
+		catch(Exception e) {
+			e.printStackTrace();
+		}
+	}
+	//기존정보 불러오기
+	public void readInfo() {
+		boolean flag = true;
+		try {
+			/*
+			인스턴스의 복원(역직렬화)를 위한 스트림을 생성하고 readObject()를
+			통해 복원한다. 
+			 */
+			java.io.ObjectInputStream in =
+					new java.io.ObjectInputStream(
+							new FileInputStream(directory)
+							);
+			while(flag) {
+				PhoneInfo pInfo = (PhoneInfo)in.readObject();
+				info.add(pInfo);
+				if(pInfo==null) break;
+			}
+			in.close();
+		}
+		catch(EOFException e) {
+			e.printStackTrace();
+			flag = false;
+		}
+		catch(Exception e) {
+			e.printStackTrace();
+		}
 	}
 }
