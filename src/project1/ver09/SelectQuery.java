@@ -1,6 +1,8 @@
 package project1.ver09;
 
 import java.sql.SQLException;
+import java.util.Scanner;
+
 import project1.ver09.IConnectImpl;
 
 /*
@@ -34,34 +36,24 @@ public class SelectQuery extends IConnectImpl {
 		try {
 			stmt = con.createStatement();
 			
-			String query = "SELECT "
-						+ " name, phone_number, to_char(birthday, 'yyyy.mm.dd') "
-						+ " FROM phonebook_tb ";
+			//검색할 내용을 사용자로부터 입력받는다.
+			Scanner scan = new Scanner(System.in);
+			System.out.print("이름:");
+			String iName = scan.nextLine();
 			
-			rs = stmt.executeQuery(query);
+			String query = "SELECT * "
+						+ " FROM phonebook_tb "
+						+ " WHERE name LIKE '%"+ iName +"%'";
+			
+			rs = stmt.executeQuery(query);//
+			
 			while(rs.next()) {
-				String iName = rs.getString("name");
+				int iNum = rs.getInt("num");
+				iName = rs.getString("name");
+//				String iName = rs.getString("name");
 				String iPhone = rs.getString("phone_number");
 				String iBirth = rs.getString("birthday");
-//				/*
-//				오라클의 date타입을 getDate()로 추출하면
-//				0000-00-00 형태로 출력된다.
-//				이 경우 date형 자료이므로
-//				java.sql.Date클래스의 참조변수로 저장해야 한다.
-//				 */
-//				java.sql.Date regidate = rs.getDate("regidate");
-//				/*
-//				오라클의 date타입을 getString()으로 추출하면
-//				0000-00-00 00:00:00 형태로 시간까지 출력가능.
-//				만약 적당한 크기로 자르고 싶다면 substring()을 사용한다.
-//				 */
-//				String regidate2 = rs.getString("regidate");
-//				String regidate3 = rs.getString("regidate").substring(0,13);
-//				//쿼리문에 사용한 별칭을 사용가능
-//				String regidate4 = rs.getString("d1");
-				
-				System.out.printf("%s %s %s\n",
-						iName, iPhone, iBirth);
+				System.out.printf("%d %s %s %s\n", iNum, iName, iPhone, iBirth);
 			}
 		}
 		catch (SQLException e) {

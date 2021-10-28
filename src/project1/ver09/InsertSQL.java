@@ -16,7 +16,8 @@ public class InsertSQL extends IConnectImpl
 	public void execute() {
 		try {
 			//1. 쿼리문준비 - 값의 세팅이 필요한 부분을 ?(인파라미터)로 대체한다.
-			String query = "INSERT INTO phonebook_tb VALUES (?, ?, ?)";
+			String query = "INSERT INTO phonebook_tb "
+					+ " VALUES (seq_phonebook.nextval, ?, ?, ?)";
 			
 			//2. prepared객체 생성 - 생성시 위에서 준비한 쿼리문을 인자로 전달한다. 
 			psmt = con.prepareStatement(query);
