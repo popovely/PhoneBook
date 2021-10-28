@@ -36,10 +36,6 @@ public class PhoneBookManager
 		insert.execute();
 		
 		System.out.println("데이터 입력이 완료되었습니다.");
-		
-//		PhoneInfo pInfo = new PhoneInfo(iName, iPhone, iBirth);
-//		infoArr[numOfFriends++] = pInfo;
-//		System.out.println();
 	}
 	//검색
 	public void dataSearch() {
